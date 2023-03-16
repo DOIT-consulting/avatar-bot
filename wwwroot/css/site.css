@@ -1,7 +1,8 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: "Inconsolata", sans-serif;
+    font-weight: bold;
 }
 
 h1:focus {
@@ -19,7 +20,7 @@ a, .btn-link {
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 .content {
@@ -66,3 +67,30 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+.wip-background {
+    background-image: url('../images/wip.gif');
+    height: 100vh;
+    background-position: center;
+    background-repeat: no-repeat;
+    text-align: center;
+}
+
+.logo {
+    padding-top: 50px;
+    width: 125px;
+    margin: 0 auto;
+}
+
+.wip-background-shade {
+    background-color: rgba(255, 255, 255, 0.9);
+    background-size: cover;
+    height: 100vh;
+}
+
+.centered-content {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    position: fixed;
+}
