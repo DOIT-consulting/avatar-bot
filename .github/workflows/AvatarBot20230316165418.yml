@@ -1,10 +1,10 @@
-name: Build and deploy .NET Core application to Web App AvatarBot20230316162744
+name: Build and deploy .NET Core application to Web App AvatarBot20230316165418
 on:
   push:
     branches:
     - master
 env:
-  AZURE_WEBAPP_NAME: AvatarBot20230316162744
+  AZURE_WEBAPP_NAME: AvatarBot20230316165418
   AZURE_WEBAPP_PACKAGE_PATH: .\published
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 7.0.x
@@ -44,5 +44,5 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        publish-profile: ${{ secrets.AvatarBot20230316162744_887F }}
+        publish-profile: ${{ secrets.AvatarBot20230316165418_DAB8 }}
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
