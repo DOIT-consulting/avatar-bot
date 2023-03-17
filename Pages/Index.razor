@@ -1,26 +1,94 @@
 ﻿@page "/"
+@inject IJSRuntime JSRuntime;
+@inject HttpClient Http;
+@using SixLabors.ImageSharp;
+@using SixLabors.ImageSharp.Formats.Jpeg;
+@using System.Net.Http;
+@using System.IO;
 
 <PageTitle>DOIT Avatar bot</PageTitle>
-<div class="wip-background">
-    <div class="wip-background-shade">
-        <div class="centered-content">
-            <div>
-                This page will be available with the Workshop fest's start
+<div class="not-printable position-absolute" style="right: 10px;top: 0;">
+    <button class="btn btn-primary mt-2" @onclick="downloadImage">Download</button>
+    <button class="btn btn-primary mt-2" @onclick="changeDoitImage">Change image</button>
+</div>
+<div class="row" id="toPrint">
+    <div class="col-6 d-flex flex-wrap align-items-center">
+        <div class="wip-background">
+            <div fxLayout="column" fxLayoutAlign="space-around center" class="mt-4 pt-4 d-inline-block">
+                @if (string.IsNullOrEmpty(frameUri)) {
+                    <video class="" id="videoFeed" width="360" height="240" />
+                    <canvas class="d-none" id="currentFrame" width="360" height="240" />
+                    <input class="form-control not-printable text-center" type="text" @bind="captionText" placeholder="Enter your name (optional)" />
+                    <button class="btn btn-primary mt-2 not-printable" @onclick="CaptureFrame">Capture Frame</button>
+                }
+                @if (!string.IsNullOrEmpty(frameUri)) {
+                    <div>
+                        <img class="keeped-image" width="240" height="240" src="@frameUri" />
+                        <br />
+                        <h4>@captionText</h4>
+                        <button class="btn btn-primary mt-2 not-printable" @onclick="Reset">Keep again</button>
+                    </div>
+                }
             </div>
-            <div class="logo">
-                <svg preserveAspectRatio="xMidYMid meet" data-bbox="0 0 461.61 124.56" viewBox="0 0 461.61 124.56" xmlns="http://www.w3.org/2000/svg" data-type="color" role="presentation" aria-hidden="true" aria-labelledby="svgcid-3got5qdpv6zs">
-                    <title id="svgcid-3got5qdpv6zs"></title>
-                    <g>
-                        <g>
-                            <path d="M200.59 0a62.28 62.28 0 1 0 62.28 62.27A62.35 62.35 0 0 0 200.59 0m30.92 62.27a30.92 30.92 0 1 1-30.92-30.91 31 31 0 0 1 30.92 30.91" fill="#1773f5" data-color="1"></path>
-                            <path fill="#1773f5" d="M325.69.07v124.4h-31.43V.07h31.43z" data-color="1"></path>
-                            <path fill="#1773f5" d="M357.08.07v31.05h36.55v93.35h31.43V31.12h36.55V.07H357.08z" data-color="1"></path>
-                            <path d="M51.66.07H0v124.4h51.66a62.2 62.2 0 1 0 0-124.4M82.89 62.2a31.27 31.27 0 0 1-31.23 31.23H31.43V31.12h20.23A31.19 31.19 0 0 1 82.89 62.2" fill="#1773f5" data-color="1"></path>
-                        </g>
-                    </g>
-                </svg>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <img width="100%" src="images/wf2023.png" />
             </div>
-            <a href="http://www.doit.it" target="_blank">About</a>
+            <div class="col-6">
+                <img width="100%" src="images/logo_doit_def-01.png" />
+            </div>
         </div>
     </div>
+    <div class="col-6">
+        <img width="100%" src="@doitImage" />
+    </div>
 </div>
+
+@code {
+    private string captionText;
+    private string frameUri;
+    private string doitImage;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender) {
+        if (firstRender) {
+            changeDoitImage();
+            await JSRuntime.InvokeVoidAsync("startVideo", "videoFeed");
+        }
+    }
+
+    private async Task CaptureFrame() {
+        await JSRuntime.InvokeAsync<String>("getFrame", "videoFeed", "currentFrame", DotNetObjectReference.Create(this));
+    }
+
+    private async Task Reset() {
+        frameUri = null;
+        await JSRuntime.InvokeVoidAsync("startVideo", "videoFeed");
+    }
+
+    public void changeDoitImage() {
+        var random = new Random();
+        var n = random.Next(1, 4);
+        var imageString = $"images/doit{n}.gif";
+        if(imageString == doitImage){
+            n = random.Next(1, 4);
+            imageString = $"images/doit{n}.gif";
+        }
+        doitImage = imageString;
+        StateHasChanged();
+    }
+
+    public async void downloadImage() {
+        await JSRuntime.InvokeVoidAsync("takeScreenshot", "toPrint");
+    }
+
+    [JSInvokable]
+    public void ProcessImage(string imageString) {
+        byte[] imageData = Convert.FromBase64String(imageString.Split(',')[1]);
+
+        using (var image = Image.Load(imageData)) {
+            image.Mutate(x => x.Flip(FlipMode.Horizontal));
+            frameUri = image.ToBase64String(JpegFormat.Instance);
+        }
+    }
+}

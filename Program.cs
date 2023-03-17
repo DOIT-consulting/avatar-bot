@@ -1,11 +1,16 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+builder.Services.Configure<HubOptions>(options => {
+    options.MaximumReceiveMessageSize = 1024 * 1024 * 16; // 1MB or use null
+});
+builder.Services.AddScoped(sp => new HttpClient());
 
 var app = builder.Build();
 
