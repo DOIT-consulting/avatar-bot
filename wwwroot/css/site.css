@@ -69,8 +69,10 @@ a, .btn-link {
     }
 
 .wip-background {
-    background-image: url('../images/wip.gif');
-    height: 100vh;
+    background-image: url('../images/wfbg.png');
+    /*height: 70vh;*/
+    width: 100%;
+    height: 50%;
     background-position: center;
     background-repeat: no-repeat;
     text-align: center;
@@ -83,9 +85,9 @@ a, .btn-link {
 }
 
 .wip-background-shade {
-    background-color: rgba(255, 255, 255, 0.9);
+    /*background-color: rgba(255, 255, 255, 0.9);*/
     background-size: cover;
-    height: 100vh;
+    height: 70vh;
 }
 
 .centered-content {
@@ -93,4 +95,14 @@ a, .btn-link {
     top: 50%;
     transform: translate(-50%, -50%);
     position: fixed;
+}
+
+.keeped-image {
+    border-radius: 50%;
+    border: 2px solid #f55a00;
+    overflow: hidden;
+}
+
+h4{
+    color: white
 }
