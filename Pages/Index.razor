@@ -87,7 +87,8 @@
         byte[] imageData = Convert.FromBase64String(imageString.Split(',')[1]);
 
         using (var image = Image.Load(imageData)) {
-            image.Mutate(x => x.Flip(FlipMode.Horizontal));
+            Rectangle rectangle = new Rectangle(40, 0, 280, 240);
+            image.Mutate(x => x.Flip(FlipMode.Horizontal).Crop(rectangle));
             frameUri = image.ToBase64String(JpegFormat.Instance);
         }
     }
